@@ -21,7 +21,6 @@ def query_huggingface(image_bytes, prompt):
 
     response = requests.post(API_URL, headers=headers, json=payload)
 
-    # 상태 코드 및 JSON 파싱 검증
     if response.status_code != 200:
         st.write(f"Status Code: {response.status_code}")
         st.write("Response Text:", response.text)
@@ -41,11 +40,19 @@ prompt = st.text_area(
 )
 
 if uploaded_file and st.button("Run Model"):
+    # 파일 업로드
     image = Image.open(uploaded_file).convert("RGB")
+    # 업로드된 이미지 출력
+    st.image(image, caption="Uploaded MRI Image", use_column_width=True)
+
+    # 바이트 배열로 변환
     img_byte_arr = io.BytesIO()
     image.save(img_byte_arr, format='PNG')
     img_byte_arr = img_byte_arr.getvalue()
 
+    # 모델 호출
     result = query_huggingface(img_byte_arr, prompt)
+
+    # 결과 표시
     st.subheader("Model Response:")
-    st.write(result)
+    st.json(result)  # JSON 형태로 보기 좋게 출력
