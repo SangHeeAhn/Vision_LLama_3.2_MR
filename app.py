@@ -2,6 +2,7 @@ import streamlit as st
 import requests
 from PIL import Image
 import io
+import base64
 
 # Streamlit UI 설정
 st.title("Medical Image Tumor Detection")
@@ -13,11 +14,14 @@ hf_token = st.text_input("Enter your Hugging Face API Token:", type="password")
 API_URL = "https://api-inference.huggingface.co/models/meta-llama/Llama-3.2-11B-Vision-Instruct"
 
 # API 요청 함수
-def query_huggingface(image, prompt):
+def query_huggingface(image_bytes, prompt):
+    # Base64 인코딩
+    encoded_image = base64.b64encode(image_bytes).decode("utf-8")
+    
     headers = {"Authorization": f"Bearer {hf_token}"}
     payload = {
         "inputs": {
-            "image": image,
+            "image": encoded_image,  # Base64 문자열로 담아 전송
             "text": prompt
         }
     }
@@ -26,8 +30,8 @@ def query_huggingface(image, prompt):
 
 # 이미지 업로드
 uploaded_file = st.file_uploader("Upload an MRI image", type=["png", "jpg", "jpeg"])
-
-prompt = st.text_area("Enter your prompt:", "You are a medical imaging expert trained to detect brain tumors in MRI scans...")
+prompt = st.text_area("Enter your prompt:", 
+    "You are a medical imaging expert trained to detect brain tumors in MRI scans...")
 
 # 실행 버튼
 if uploaded_file and st.button("Run Model"):
