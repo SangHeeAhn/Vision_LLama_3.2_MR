@@ -13,22 +13,20 @@ def query_huggingface(image_bytes, prompt):
     encoded_image = base64.b64encode(image_bytes).decode("utf-8")
     
     headers = {"Authorization": f"Bearer {hf_token}"}
+    # "inputs"는 문자열만, 이미지는 별도 필드 "image"에 담음
     payload = {
-        "inputs": {
-            "image": encoded_image,
-            "text": prompt
-        }
+        "inputs": prompt,
+        "image": encoded_image
     }
 
     response = requests.post(API_URL, headers=headers, json=payload)
 
-    # 1) 상태 코드 확인
+    # 상태 코드 및 JSON 파싱 검증
     if response.status_code != 200:
         st.write(f"Status Code: {response.status_code}")
         st.write("Response Text:", response.text)
         return {"error": "Non-200 response received"}
-
-    # 2) JSON 파싱 시도
+    
     try:
         return response.json()
     except requests.exceptions.JSONDecodeError:
