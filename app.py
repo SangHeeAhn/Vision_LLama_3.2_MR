@@ -35,7 +35,7 @@ def query_huggingface(image_bytes, prompt):
 uploaded_file = st.file_uploader("Upload an MRI image", type=["png", "jpg", "jpeg"])
 prompt = st.text_area(
     "Enter your prompt:",
-    "You are a medical imaging expert trained to detect brain tumors in MRI scans. Your task is to find and precisely localize the tumor. Additionally, explain why this region is considered a tumor based on the image features. The tumor is usually in a high-intensity region (bright area in grayscale)."
+    "You are a medical imaging expert trained to detect brain tumors in MRI scans. Your task is to find and precisely localize the tumor. Additionally, explain why this region is considered a tumor based on the image features."
 )
 
 if uploaded_file and st.button("Run Model"):
